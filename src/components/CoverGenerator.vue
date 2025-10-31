@@ -25,6 +25,10 @@
           class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer text-center text-sm"
         >上传背景图片</label>
         <input type="file" id="inputBgImage" accept="image/*" @change="updatePreview('bg', $event)" class="hidden">
+        <button
+          @click="getRandomBgImage"
+          class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-center text-sm whitespace-nowrap"
+        >获取随机图片</button>
         <label 
           for="inputSquareImage" 
           class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer text-center text-sm"
@@ -377,6 +381,14 @@ export default {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = url;
+        link.onload = () => {
+          // 字体样式加载完成后，等待字体文件加载
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+              this.updatePreview('font', { target: { value: state.selectedFont } });
+            });
+          }
+        };
         document.head.appendChild(link);
       });
     },
@@ -436,7 +448,20 @@ export default {
     selectFont(fontValue) {
       state.selectedFont = fontValue;
       state.isFontMenuOpen = false;
-      this.updatePreview('font', { target: { value: fontValue } });
+      // 等待字体加载完成
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          // 再等待一小段时间确保字体文件完全加载
+          setTimeout(() => {
+            this.updatePreview('font', { target: { value: fontValue } });
+          }, 100);
+        });
+      } else {
+        // 如果不支持 document.fonts，就直接更新
+        setTimeout(() => {
+          this.updatePreview('font', { target: { value: fontValue } });
+        }, 300);
+      }
     },
     handleClickOutside(event) {
       const dropdown = document.querySelector('.relative');
@@ -446,6 +471,20 @@ export default {
     },
     openSettings() {
       this.showSettings = true;
+    },
+    async getRandomBgImage() {
+      try {
+        const response = await fetch('https://api.elvish.me:16666/pic');
+        if (!response.ok) {
+          throw new Error('获取随机图片失败');
+        }
+        const blob = await response.blob();
+        const file = new File([blob], 'random-bg.jpg', { type: blob.type });
+        this.updatePreview('bg', { target: { files: [file] } });
+      } catch (error) {
+        console.error('获取随机图片时出错:', error);
+        alert('获取随机图片失败，请稍后重试');
+      }
     }
   }
 };

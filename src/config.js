@@ -2,6 +2,7 @@ const fonts = [
     [import.meta.env.VITE_APP_FONT_FAMILY, '默认全局'],
     ['Microsoft YaHei', '微软雅黑'],
     // [字体名称, 显示名称, CSS文件地址]
+    ['Blueaka', 'Blueaka字体', '/fonts/Blueaka/blueaka.css'],
     ['HarmonyOS_Regular', '鸿蒙字体', 'https://s1.hdslb.com/bfs/static/jinkela/long/font/regular.css'],
     ['yozai', '悠哉字体', 'https://chinese-fonts-cdn.deno.dev/packages/yozai/dist/Yozai-Regular/result.css'],
     ['寒蝉全圆体', '寒蝉全圆体', 'https://chinese-fonts-cdn.deno.dev/packages/hcqyt/dist/ChillRoundFRegular/result.css'],
