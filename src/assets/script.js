@@ -25,7 +25,12 @@ export const state = reactive({
     iconBgSize: 0,
     selectedFont: defaultConfig.fontFamily,
     isFontMenuOpen: false,
-    hasMultipleLines: false
+    hasMultipleLines: false,
+    iconOffsetX: 0,
+    iconOffsetY: 0,
+    iconOpacity: 1,
+    iconSvgColor: '#000000',
+    isIconFromLibrary: false
 });
 
 export let canvas = null;
@@ -62,7 +67,11 @@ export function updatePreview(type, event) {
         lineHeight: drawText,
         text3D: updateText3D,
         shadowColor: updateShadowColor,
-        shadowStrength: updateShadowStrength
+        shadowStrength: updateShadowStrength,
+        iconOffsetX: updateIconOffsetX,
+        iconOffsetY: updateIconOffsetY,
+        iconOpacity: updateIconOpacity,
+        iconSvgColor: updateIconSvgColor
     };
     updateFunctions[type](event);
 }
@@ -168,6 +177,26 @@ export function updateShadowStrength(event) {
     drawSquareImage();
 }
 
+export function updateIconOffsetX(event) {
+    state.iconOffsetX = Number(event.target.value);
+    drawSquareImage();
+}
+
+export function updateIconOffsetY(event) {
+    state.iconOffsetY = Number(event.target.value);
+    drawSquareImage();
+}
+
+export function updateIconOpacity(event) {
+    state.iconOpacity = Number(event.target.value);
+    drawSquareImage();
+}
+
+export function updateIconSvgColor(event) {
+    state.iconSvgColor = event.target.value;
+    drawSquareImage();
+}
+
 function loadImage(file, callback) {
     if (!loadedImages.has(file)) {
         const reader = new FileReader();
@@ -215,8 +244,8 @@ export function drawSquareImage() {
             const totalSize = state.squareSize;
             const borderWidth = 20;
             const size = totalSize - 2 * borderWidth;
-            const x = (squareCanvas.width - totalSize) / 2;
-            const y = (squareCanvas.height - totalSize) / 2;
+            const x = (squareCanvas.width - totalSize) / 2 + state.iconOffsetX;
+            const y = (squareCanvas.height - totalSize) / 2 + state.iconOffsetY;
             const radius = 30;
 
             const tempCanvas = document.createElement('canvas');
@@ -263,6 +292,7 @@ export function drawSquareImage() {
             }
 
             tempCtx.save();
+            tempCtx.globalAlpha = state.iconOpacity;
             tempCtx.beginPath();
             tempCtx.moveTo(radius + borderWidth, borderWidth);
             tempCtx.arcTo(totalSize - borderWidth, borderWidth, totalSize - borderWidth, radius + borderWidth, radius);
@@ -291,7 +321,27 @@ export function drawSquareImage() {
             const offsetX = (size - scaledWidth) / 2;
             const offsetY = (size - scaledHeight) / 2;
 
-            tempCtx.drawImage(squareImg, borderWidth + offsetX, borderWidth + offsetY, scaledWidth, scaledHeight);
+            // 如果是SVG图标且需要着色
+            if (state.isIconFromLibrary && state.iconSvgColor !== '#000000') {
+                // 创建临时画布用于着色
+                const colorCanvas = document.createElement('canvas');
+                colorCanvas.width = scaledWidth;
+                colorCanvas.height = scaledHeight;
+                const colorCtx = colorCanvas.getContext('2d');
+                
+                // 绘制原始图像
+                colorCtx.drawImage(squareImg, 0, 0, scaledWidth, scaledHeight);
+                
+                // 应用颜色混合
+                colorCtx.globalCompositeOperation = 'source-in';
+                colorCtx.fillStyle = state.iconSvgColor;
+                colorCtx.fillRect(0, 0, scaledWidth, scaledHeight);
+                
+                tempCtx.drawImage(colorCanvas, borderWidth + offsetX, borderWidth + offsetY);
+            } else {
+                tempCtx.drawImage(squareImg, borderWidth + offsetX, borderWidth + offsetY, scaledWidth, scaledHeight);
+            }
+            
             tempCtx.restore();
 
             squareCtx.save();

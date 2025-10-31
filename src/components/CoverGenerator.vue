@@ -33,7 +33,7 @@
           for="inputSquareImage" 
           class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer text-center text-sm"
         >上传图标图片</label>
-        <input type="file" id="inputSquareImage" accept="image/*" @change="updatePreview('square', $event)" class="hidden">
+        <input type="file" id="inputSquareImage" accept="image/*" @change="handleSquareImageUpload" class="hidden">
         <a 
           href="https://icon.ruom.top" 
           target="_blank"
@@ -171,6 +171,64 @@
               id="inputIconColor"
               v-model="state.iconColor"
               @input="updatePreview('iconColor', $event)"
+              class="w-full h-6 rounded cursor-pointer"
+            >
+          </div>
+        </div>
+
+        <!-- 图标位置控制 -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="w-full sm:flex-1 flex items-center gap-2">
+            <label class="whitespace-nowrap" for="inputIconOffsetX">图标左右位置</label>
+            <input 
+              type="range"
+              id="inputIconOffsetX"
+              min="-500"
+              max="500"
+              v-model="state.iconOffsetX"
+              @input="updatePreview('iconOffsetX', $event)"
+              class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            >
+          </div>
+          <div class="w-full sm:flex-1 flex items-center gap-2">
+            <label class="whitespace-nowrap" for="inputIconOffsetY">图标上下位置</label>
+            <input 
+              type="range"
+              id="inputIconOffsetY"
+              min="-250"
+              max="250"
+              v-model="state.iconOffsetY"
+              @input="updatePreview('iconOffsetY', $event)"
+              class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            >
+          </div>
+        </div>
+
+        <!-- 图标透明度和颜色控制 -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="w-full sm:flex-1 flex items-center gap-2">
+            <label class="whitespace-nowrap" for="inputIconOpacity">图标透明度</label>
+            <input 
+              type="range"
+              id="inputIconOpacity"
+              min="0"
+              max="1"
+              step="0.01"
+              v-model="state.iconOpacity"
+              @input="updatePreview('iconOpacity', $event)"
+              class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            >
+          </div>
+          <div 
+            v-if="state.isIconFromLibrary"
+            class="w-full sm:flex-1 flex items-center gap-2"
+          >
+            <label class="whitespace-nowrap" for="inputIconSvgColor">图标颜色</label>
+            <input 
+              type="color"
+              id="inputIconSvgColor"
+              v-model="state.iconSvgColor"
+              @input="updatePreview('iconSvgColor', $event)"
               class="w-full h-6 rounded cursor-pointer"
             >
           </div>
@@ -401,6 +459,7 @@ export default {
       } else {
         this.iconUrl = null;
         state.squareImageUrl = null;
+        state.isIconFromLibrary = false;
       }
     },
     selectIcon() {
@@ -410,6 +469,7 @@ export default {
           .then(blob => {
             const file = new File([blob], 'icon.svg', { type: 'image/svg+xml' });
             state.squareImageUrl = URL.createObjectURL(file);
+            state.isIconFromLibrary = true;
             updatePreview('square', { target: { files: [file] } });
           })
           .catch(error => {
@@ -443,6 +503,9 @@ export default {
       const file = event.dataTransfer.files[0];
       if (!file || !file.type.startsWith('image/')) return;
       const area = this.getDropArea(event);
+      if (area === 'icon') {
+        state.isIconFromLibrary = false;
+      }
       this.updatePreview(area === 'icon' ? 'square' : 'bg', { target: { files: [file] } });
     },
     selectFont(fontValue) {
@@ -485,6 +548,10 @@ export default {
         console.error('获取随机图片时出错:', error);
         alert('获取随机图片失败，请稍后重试');
       }
+    },
+    handleSquareImageUpload(event) {
+      state.isIconFromLibrary = false;
+      this.updatePreview('square', event);
     }
   }
 };
