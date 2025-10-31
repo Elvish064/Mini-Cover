@@ -1,0 +1,11 @@
+@font-face {
+  font-family: 'Blueaka';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./Blueaka-04963599723c63b7.woff2') format('woff2'),
+       url('./Blueaka-04a581db85db1264.woff2') format('woff2'),
+       url('./Blueaka-04eb870148b2b987.woff2') format('woff2'),
+       url('./Blueaka-08aee6fa067d1881.woff2') format('woff2'),
+       url('./Blueaka-094f02ea710eaf0b.woff2') format('woff2');
+}
