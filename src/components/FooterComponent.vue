@@ -10,6 +10,10 @@
          href="https://icp.gov.moe/?keyword=20250030" 
          target="_blank"
          class="font-bold text-green-600 hover:text-gray-600 transition-colors">{{ icpNumber }}</a>
+      <a v-if="icpNumber" 
+         href="https://beian.miit.gov.cn/" 
+         target="_blank"
+         class="font-bold text-green-600 hover:text-gray-600 transition-colors">渝ICP备2025073510号</a>
       <button class="text-pink-500 font-bold" @click="toggleTips">小提示</button>
     </div>
     
