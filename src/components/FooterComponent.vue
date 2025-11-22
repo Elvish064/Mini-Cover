@@ -2,7 +2,7 @@
   <footer class="sm:mt-12 mb-2 text-center text-xs sm:text-sm">
   
     <div class="mt-2 space-x-2">
-      <span>© 2025</span>
+      <span>© {{ new Date().getFullYear() }}</span>
       <a href="https://elvish.me" 
          target="_blank"
          class="font-bold text-green-600 hover:text-gray-600 transition-colors">Elvish</a>
