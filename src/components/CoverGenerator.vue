@@ -537,7 +537,7 @@ export default {
     },
     async getRandomBgImage() {
       try {
-        const response = await fetch('https://api.elvish.me/pic');
+        const response = await fetch('https://pic.elvish.me/pc');
         if (!response.ok) {
           throw new Error('获取随机图片失败');
         }
