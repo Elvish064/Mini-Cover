@@ -94,7 +94,7 @@
       <!-- 图标和阴影设置 -->
       <div 
         class="flex flex-col gap-3 overflow-hidden transition-all duration-300 ease-out"
-        :class="state.squareImageUrl ? 'mb-3 max-h-[300px] sm:max-h-[200px] opacity-100' : 'max-h-0 opacity-0'"
+        :class="state.squareImageUrl ? 'mb-3 max-h-[450px] sm:max-h-[400px] opacity-100' : 'max-h-0 opacity-0'"
       >
         <!-- 图标控制 -->
         <div class="flex flex-col sm:flex-row gap-3">
@@ -233,6 +233,18 @@
             >
           </div>
         </div>
+
+        <!-- 图标层级控制 -->
+        <div class="flex items-center gap-2">
+          <input 
+            type="checkbox"
+            id="inputIconBehindText"
+            v-model="state.iconBehindText"
+            @change="updatePreview('iconBehindText', $event)"
+            class="w-4 h-4 text-green-600 rounded focus:ring-green-500 border-gray-300 cursor-pointer"
+          >
+          <label class="whitespace-nowrap text-sm select-none cursor-pointer" for="inputIconBehindText">图标置于文字下方</label>
+        </div>
       </div>
 
       <!-- 文本设置 -->
@@ -313,6 +325,34 @@
             step="1"
             v-model.number="state.text3D"
             @input="updatePreview('text3D', $event)"
+            class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          >
+        </div>
+      </div>
+
+      <!-- 标题位置控制 -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-3">
+        <div class="w-full sm:flex-1 flex items-center gap-2">
+          <label class="whitespace-nowrap" for="inputTextOffsetX">标题左右位置</label>
+          <input 
+            type="range"
+            id="inputTextOffsetX"
+            min="-500"
+            max="500"
+            v-model="state.textOffsetX"
+            @input="updatePreview('textOffsetX', $event)"
+            class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          >
+        </div>
+        <div class="w-full sm:flex-1 flex items-center gap-2">
+          <label class="whitespace-nowrap" for="inputTextOffsetY">标题上下位置</label>
+          <input 
+            type="range"
+            id="inputTextOffsetY"
+            min="-250"
+            max="250"
+            v-model="state.textOffsetY"
+            @input="updatePreview('textOffsetY', $event)"
             class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           >
         </div>

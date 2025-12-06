@@ -30,7 +30,10 @@ export const state = reactive({
     iconOffsetY: 0,
     iconOpacity: 1,
     iconSvgColor: '#000000',
-    isIconFromLibrary: false
+    isIconFromLibrary: false,
+    iconBehindText: false,
+    textOffsetX: 0,
+    textOffsetY: 0
 });
 
 export let canvas = null;
@@ -71,9 +74,27 @@ export function updatePreview(type, event) {
         iconOffsetX: updateIconOffsetX,
         iconOffsetY: updateIconOffsetY,
         iconOpacity: updateIconOpacity,
-        iconSvgColor: updateIconSvgColor
+        iconSvgColor: updateIconSvgColor,
+        iconBehindText: updateIconBehindText,
+        textOffsetX: updateTextOffsetX,
+        textOffsetY: updateTextOffsetY
     };
     updateFunctions[type](event);
+}
+
+export function updateTextOffsetX(event) {
+    state.textOffsetX = Number(event.target.value);
+    drawText();
+}
+
+export function updateTextOffsetY(event) {
+    state.textOffsetY = Number(event.target.value);
+    drawText();
+}
+
+export function updateIconBehindText(event) {
+    state.iconBehindText = event.target.checked;
+    composeCanvases();
 }
 
 export function updateText3D(event) {
@@ -397,11 +418,11 @@ export function drawText() {
     const lines = state.text.split('\n');
     const lineHeight = state.textSize * state.lineHeight;
     const totalHeight = lineHeight * lines.length;
-    const startY = (textCanvas.height - totalHeight) / 2 + lineHeight / 2;
+    const startY = (textCanvas.height - totalHeight) / 2 + lineHeight / 2 + state.textOffsetY;
 
     lines.forEach((line, index) => {
         const y = startY + index * lineHeight;
-        textCtx.fillText(line, textCanvas.width / 2, y);
+        textCtx.fillText(line, textCanvas.width / 2 + state.textOffsetX, y);
     });
 
     composeCanvases();
@@ -422,8 +443,13 @@ export function composeCanvases() {
     if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(bgCanvas, 0, 0);
-        ctx.drawImage(textCanvas, 0, 0);
-        ctx.drawImage(squareCanvas, 0, 0);
+        if (state.iconBehindText) {
+            ctx.drawImage(squareCanvas, 0, 0);
+            ctx.drawImage(textCanvas, 0, 0);
+        } else {
+            ctx.drawImage(textCanvas, 0, 0);
+            ctx.drawImage(squareCanvas, 0, 0);
+        }
         ctx.drawImage(watermarkCanvas, 0, 0);
     }
 }
